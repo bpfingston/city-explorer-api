@@ -4,13 +4,15 @@ const app = express();
 require("dotenv").config();
 const PORT = process.env.PORT || 9002;
 const weatherData = require("./data/weather.json");
-const cors = require('cors');
-const { response } = require("express");
+const cors = require("cors");
+// const { response } = require("express");
+app.use(cors());
+
 
 app.get('/', (request, response) => {
     response.status(200).send('It\'s over 9000!')
 });
-app.use(cors());
+
 
 class Forecast{
     constructor (date, description){
@@ -23,18 +25,18 @@ app.get('/weather', (request, response) => {
     let city = request.query.searchquery;
     const lat = request.query.lat;
     const lon = request.query.lon;
-    if(city){
-        city=city.toLowerCase();
-    };
+
 
     try{
+        city=city.toLowerCase();
+        
     const cityData = weatherData.find( 
         (searchedCity) => 
-            searchedCity.city_name.toLowerCase() === city && 
+            searchedCity.city_name.toLowerCase() === city &&
             searchedCity.lat === lat && 
             searchedCity.lon === lon
     );
-    console.log(response.send(createWeather(cityData)), '<--- my stuff');
+    console.log(createWeather(cityData), '<--- my stuff');
     response.send(createWeather(cityData));
     }catch(error){
     response.status(404, `Error Not A City`);

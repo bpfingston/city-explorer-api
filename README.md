@@ -40,4 +40,5 @@ Finish time: stopped at midnight,still not done
 
 Actual time needed to complete: N/A
 
-[Trello](https://trello.com/b/6ywXyRff/module2-city-explorer)
+![Trello](https://trello.com/b/6ywXyRff/module2-city-explorer)
+![WRRC 09/21/2021](./img/image.png)
