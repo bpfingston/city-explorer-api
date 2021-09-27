@@ -1,4 +1,6 @@
+'use strict'
 const axios = require("axios");
+const cache = require("./cache.js")
 
 class Movie {
     constructor(movie){
@@ -19,14 +21,24 @@ function createPoster(movieData){
     return movieObjects;
 }
 
-async function grabMovie(request, response){
-    const searchQuery = request.query.searchquery;
-    const movieAPI = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.Movie_API_Key}&query=${searchQuery}&page1`;
-    console.log(movieAPI);
-    const movieData = await axios.get(movieAPI);
-    console.log(movieData.data)
-    response.status(200).send(createPoster(movieData));
-    console.log(movieData.data);
-}
+async function grabMovie (request, response) {
+    const Query = request.query.searchquery;
+    const movieAPI = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.Movie_API_Key}&query=${Query}&page1`;
+    console.log(Query)
+  
+    if(cache.cache.movie[Query] && (Date.now() - cache.cache.movie[Query].time < 604800000)){
+        response.render(cache.cache.movie[Query]);
+        
+    } else {
+        const grabNewMovie = await axios.get(movieAPI).then(response => createPoster(response))
+        let cachedMovie = {
+            data: grabNewMovie,
+            time: Date.now(),
+        }
+        cache.cache.movie[Query] = cachedMovie;
+        response.status(200).send(cachedMovie);
+    };
+};
 
-module.export = {grabMovie};
+
+module.exports={grabMovie};
